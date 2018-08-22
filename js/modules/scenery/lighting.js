@@ -1,7 +1,8 @@
+import '../../lib/glsl/SkyShader.js';
+
 class Lighting {
   constructor(scene) {
     // create scene lighting
-
     this.scene = scene;
     this.lights = {
       point: {
@@ -23,6 +24,13 @@ class Lighting {
         this.scene.add(this.lights.ambient[a]);
       }
     }
+
+    // fog
+    //this.scene.fog = new THREE.FogExp2(0x333333, 0.0275);
+
+    // skybox
+    this.sky = new THREE.Sky();
+    this.scene.add(this.sky.mesh);
   }
 
   setLightPositions() {

@@ -11,7 +11,7 @@ class Camera {
     this.aspectRatio = this.root.width / this.root.height;
     this.offset = 0.1;
     this.height = 2;
-    this.camera = new THREE.PerspectiveCamera(this.fov, this.aspectRatio, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(this.fov, this.aspectRatio, 0.1, 2000000);
     this.camera.up = new THREE.Vector3(0, 1, 0);
   }
 
