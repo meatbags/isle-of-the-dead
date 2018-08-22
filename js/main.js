@@ -3,8 +3,9 @@ import { Renderer, Scene } from './modules';
 class App {
   constructor() {
     this.scene = new Scene();
-    this.renderer = new Renderer(this.scene.getScene(), this.scene.getCamera());
+    this.renderer = new Renderer(this.scene);
     this.now = (new Date()).getTime();
+    this.loop();
   }
 
   loop() {

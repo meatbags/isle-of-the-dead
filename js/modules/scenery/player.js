@@ -1,12 +1,13 @@
-import { Keyboard, Mouse } from '../input';
+/**
+ * Handles user input and moves player on collision map.
+ **/
+
+import { Keyboard, Mouse } from '../controls';
 import { Blend, MinAngleBetween, TwoPI } from '../maths';
 
 class Player {
-  constructor(domElement, scene, colliderSystem) {
-    // handle player input
-    this.scene = scene;
-    this.colliderSystem = colliderSystem;
-    this.domElement = domElement;
+  constructor(root) {
+    this.root = root;
     this.position = new THREE.Vector3(0, 1, 0);
     this.rotation = {pitch: 0, roll: 0, yaw: 0};
     this.motion = new THREE.Vector3();
@@ -18,7 +19,7 @@ class Player {
     this.collider = new Collider.Collider(this.target.position, this.motion);
     this.collider.setPhysics({gravity: 20});
 
-    // physics attribs, all time in seconds, speeds in m/s
+    // physical attributes
     this.speed = 8;
     this.rotationSpeed = Math.PI * 0.8;
     this.jump = 11;
@@ -28,26 +29,32 @@ class Player {
     this.fallTimeThreshold = 0.2;
     this.noclip = false;
     this.noclipSpeed = 30;
-    this.minPitch = -Math.PI * 0.15;
-    this.maxPitch = Math.PI * 0.15;
-    this.adjust = {
-      slow: 0.05,
-      normal: 0.1,
-      fast: 0.15,
-      maximum: 0.3
-    };
+    this.minPitch = -Math.PI * 0.1;
+    this.maxPitch = Math.PI * 0.1;
+    this.adjust = {slow: 0.05, normal: 0.1, fast: 0.15, maximum: 0.3};
 
     // events
     this.keys = {};
     this.keyboard = new Keyboard((key) => { this.onKeyboard(key); });
-    this.hookMouse();
+    this.onMouseDown = (e) => {
+      this.mouse.start(e, this.rotation.pitch, this.rotation.yaw);
+    };
+    this.onMouseMove = (e) => {
+      if (this.mouse.isActive() && !(this.keys.left || this.keys.right)) {
+        this.mouse.move(e);
+        this.target.rotation.yaw = this.mouse.getYaw();
+        this.target.rotation.pitch = this.mouse.getPitch(this.minPitch, this.maxPitch);
+      }
+    };
+    this.onMouseUp = (e) => { this.mouse.stop(); };
+    this.mouse = new Mouse(document.querySelector('.wrapper'), this.onMouseDown, this.onMouseMove, this.onMouseUp);
 
     // add to scene
     this.group = new THREE.Group();
     this.light = new THREE.PointLight(0xffffff, 0.25);
     this.light.position.y = 1.8;
     this.group.add(this.light);
-    this.scene.add(this.group);
+    this.root.scene.add(this.group);
   }
 
   onKeyboard(key) {
@@ -99,6 +106,7 @@ class Player {
       }
     }
 
+    // decide if falling
     this.falling = (this.motion.y != 0);
     this.fallTime = (this.falling) ? this.fallTime + delta : 0;
 
@@ -111,14 +119,12 @@ class Player {
 
     if (this.noclip) {
       this.falling = false;
-
       if (this.keys.up || this.keys.down) {
         const d = ((this.keys.up) ? 1 : 0) + ((this.keys.down) ? -1 : 0);
         this.target.motion.y = Math.sin(this.target.rotation.pitch) * d * this.noclipSpeed;
       } else {
         this.target.motion.y = 0;
       }
-
       this.motion.y = this.target.motion.y;
     }
 
@@ -132,29 +138,10 @@ class Player {
     }
   }
 
-  hookMouse() {
-    // hook up mouse events
-    this.onDown = (e) => {
-      this.mouse.start(e, this.rotation.pitch, this.rotation.yaw);
-    };
-    this.onMove = (e) => {
-      if (this.mouse.isActive() && !(this.keys.left || this.keys.right)) {
-        // click & drag
-        this.mouse.move(e);
-        this.target.rotation.yaw = this.mouse.getYaw();
-        this.target.rotation.pitch = this.mouse.getPitch(this.minPitch, this.maxPitch);
-      }
-    };
-    this.onUp = (e) => {
-      this.mouse.stop();
-    };
-    this.mouse = new Mouse(this.domElement, this.onDown, this.onMove, this.onUp);
-  }
-
   update(delta) {
     this.move(delta);
     if (!this.noclip) {
-      this.collider.move(delta, this.colliderSystem);
+      this.collider.move(delta, this.root.colliderSystem);
     } else {
       this.target.position.x += this.motion.x * delta;
       this.target.position.y += this.motion.y * delta;
@@ -170,14 +157,6 @@ class Player {
 
   getTargetPosition() {
     return this.target.position;
-  }
-
-  teleport(p) {
-    // teleport player (translate)
-    this.position.x += p.x;
-    this.target.position.x += p.x;
-    this.position.z += p.z;
-    this.target.position.z += p.z;
   }
 };
 

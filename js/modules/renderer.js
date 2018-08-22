@@ -1,10 +1,10 @@
-import '../../lib/glsl';
+import '../lib/glsl';
 
 class Renderer {
-  constructor(scene, camera) {
+  constructor(scene) {
     // init webgl renderer
-    this.scene = scene;
-    this.camera = camera;
+    this.scene = scene.scene;
+    this.camera = scene.camera.camera;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.size = new THREE.Vector2(this.width, this.height);
@@ -37,7 +37,7 @@ class Renderer {
     window.addEventListener('resize', () => { this.resize(); });
 
     // add to doc
-    document.body.append(this.renderer.domElement);
+    document.querySelector('.wrapper').append(this.renderer.domElement);
   }
 
   resize() {

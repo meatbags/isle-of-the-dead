@@ -8,7 +8,6 @@ class Raycaster {
   }
 
   resize() {
-    // resize from doc target
     this.rect = this.domElement.getBoundingClientRect();
   }
 

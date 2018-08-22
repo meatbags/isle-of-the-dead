@@ -1,18 +1,22 @@
+/**
+ * Perspective camera which tracks player movement and rotation.
+ **/
+
 class Camera {
-  constructor(width, height, position, rotation) {
-    // perspective camera which tracks player movement
-    this.position = position;
-    this.rotation = rotation;
-    this.fov = 65;
-    this.aspectRatio = width / height;
+  constructor(root, position, rotation) {
+    this.root = root;
+    this.position = this.root.player.position;
+    this.rotation = this.root.player.rotation;
+    this.fov = 90;
+    this.aspectRatio = this.root.width / this.root.height;
     this.offset = 0.1;
     this.height = 2;
     this.camera = new THREE.PerspectiveCamera(this.fov, this.aspectRatio, 0.1, 1000);
     this.camera.up = new THREE.Vector3(0, 1, 0);
   }
 
-  resize(width, height) {
-    this.aspectRatio = width / height;
+  resize(w, h) {
+    this.aspectRatio = this.root.width / this.root.height;
     this.camera.aspect = this.aspectRatio;
     this.camera.updateProjectionMatrix();
   }
@@ -33,10 +37,6 @@ class Camera {
       y + Math.sin(this.rotation.pitch) * offsetY,
       this.position.z + Math.cos(this.rotation.yaw) * offsetXZ)
     );
-  }
-
-  getCamera() {
-    return this.camera;
   }
 
   teleport() {
