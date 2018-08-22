@@ -19,7 +19,7 @@ class Map {
   }
 
   loadScene() {
-    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(250, 2, 250), Materials.default.clone());
+    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(10000, 1, 10000), Materials.porcelain.clone());
     this.floor.position.y = -1;
     this.root.scene.add(this.floor);
     this.root.colliderSystem.add(this.floor);
@@ -28,9 +28,8 @@ class Map {
     var s = 50 / 3;
     for (var x=-50 - s/2; x<50; x+=s) {
       for (var z=-50 - s/2; z<50; z+=s) {
-        const h = 1 + Math.random() * 2;
-        const box = new THREE.Mesh(new THREE.BoxBufferGeometry(3, h, 3), Materials.default.clone());
-        box.position.set(x, h / 2 - 0.1, z);
+        const box = new THREE.Mesh(new THREE.SphereBufferGeometry(2, 12, 12), Materials.porcelain.clone());
+        box.position.set(x, 2.5, z);
         this.root.colliderSystem.add(box);
         this.root.scene.add(box);
         this.interactive.push(box);
@@ -46,6 +45,7 @@ class Map {
 
   update(delta) {
     // brighten cubes
+    /*
     for (var i=0, len=this.interactive.length; i<len; ++i) {
       const box = this.interactive[i];
       if (box.active) {
@@ -60,6 +60,7 @@ class Map {
         box.material.emissive.b = c;
       }
     }
+    */
 
     //this.camera.getWorldDirection(this.cameraWorldDirection);
     //for (var i=0, len=this.textNodes.length; i<len; ++i) {

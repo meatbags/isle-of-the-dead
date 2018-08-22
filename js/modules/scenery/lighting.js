@@ -6,7 +6,7 @@ class Lighting {
     this.scene = scene;
     this.lights = {
       point: {
-        //a: new THREE.PointLight(0xffffff, 1, 100, 2)
+        a: new THREE.PointLight(0xffffff, 1, 100, 2)
       },
       ambient: {
         a: new THREE.AmbientLight(0xffffff, 0.05)
@@ -34,7 +34,7 @@ class Lighting {
   }
 
   setLightPositions() {
-    //this.lights.point.a.position.set(10, 10, 10);
+    this.lights.point.a.position.set(40, 1, 40);
   }
 }
 

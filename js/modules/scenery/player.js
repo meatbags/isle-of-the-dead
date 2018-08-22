@@ -29,8 +29,8 @@ class Player {
     this.fallTimeThreshold = 0.2;
     this.noclip = true;
     this.noclipSpeed = 40;
-    this.minPitch = -Math.PI * 0.15;
-    this.maxPitch = Math.PI * 0.1;
+    this.minPitch = Math.PI * -0.15;
+    this.maxPitch = Math.PI * 0.15;
     this.adjust = {slow: 0.05, normal: 0.1, fast: 0.15, maximum: 0.3};
 
     // events
@@ -51,7 +51,7 @@ class Player {
 
     // add to scene
     this.group = new THREE.Group();
-    this.light = new THREE.PointLight(0xffffff, 0.25);
+    this.light = new THREE.PointLight(0xffffff, 0.5, 20, 2);
     this.light.position.y = 1.8;
     this.group.add(this.light);
     this.root.scene.add(this.group);
