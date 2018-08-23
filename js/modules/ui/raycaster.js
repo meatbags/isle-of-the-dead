@@ -1,3 +1,7 @@
+/**
+ * Raycaster for 3d mouse interaction.
+ **/
+
 class Raycaster {
   constructor(domElement, camera) {
     this.domElement = domElement;
@@ -12,7 +16,6 @@ class Raycaster {
   }
 
   cast(e, objects) {
-    // cast from mouse, intersect objects
     this.mouse.x = ((e.clientX - this.rect.left) / this.rect.width) * 2 - 1;
     this.mouse.y = -(((e.clientY - this.rect.top) / this.rect.height) * 2 - 1);
     this.raycaster.setFromCamera(this.mouse, this.camera);

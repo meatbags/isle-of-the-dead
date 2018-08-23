@@ -1,3 +1,7 @@
+/**
+ * Render the scene.
+ **/
+
 import '../lib/glsl';
 
 class Renderer {

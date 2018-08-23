@@ -2,18 +2,17 @@
  * Handles user input and moves player on collision map.
  **/
 
-import { Keyboard, Mouse } from '../controls';
 import { Blend, MinAngleBetween, TwoPI } from '../maths';
 
 class Player {
   constructor(root) {
     this.root = root;
-    this.position = new THREE.Vector3(-30, 25, -25);
-    this.rotation = {pitch: Math.PI * -0.15, roll: 0, yaw: 0};
+    this.position = new THREE.Vector3(10, 5, 0);
+    this.rotation = {pitch: Math.PI * -0.1, roll: 0, yaw: -Math.PI / 2};
     this.motion = new THREE.Vector3();
     this.target = {
       position: this.position.clone(),
-      rotation: {pitch: Math.PI * -0.15, roll: 0, yaw: 0},
+      rotation: {pitch: this.rotation.pitch, roll: this.rotation.roll, yaw: this.rotation.yaw},
       motion: this.motion.clone()
     };
     this.collider = new Collider.Collider(this.target.position, this.motion);
@@ -35,19 +34,6 @@ class Player {
 
     // events
     this.keys = {};
-    this.keyboard = new Keyboard((key) => { this.onKeyboard(key); });
-    this.onMouseDown = (e) => {
-      this.mouse.start(e, this.rotation.pitch, this.rotation.yaw);
-    };
-    this.onMouseMove = (e) => {
-      if (this.mouse.isActive() && !(this.keys.left || this.keys.right)) {
-        this.mouse.move(e);
-        this.target.rotation.yaw = this.mouse.getYaw();
-        this.target.rotation.pitch = this.mouse.getPitch(this.minPitch, this.maxPitch);
-      }
-    };
-    this.onMouseUp = (e) => { this.mouse.stop(); };
-    this.mouse = new Mouse(document.querySelector('.wrapper'), this.onMouseDown, this.onMouseMove, this.onMouseUp);
 
     // add to scene
     this.group = new THREE.Group();
@@ -55,31 +41,6 @@ class Player {
     this.light.position.y = 1.8;
     this.group.add(this.light);
     this.root.scene.add(this.group);
-  }
-
-  onKeyboard(key) {
-    switch (key) {
-      case 'a': case 'A': case 'ArrowLeft':
-        this.keys.left = this.keyboard.keys[key];
-        break;
-      case 'd': case 'D': case 'ArrowRight':
-        this.keys.right = this.keyboard.keys[key];
-        break;
-      case 'w': case 'W': case 'ArrowUp':
-        this.keys.up = this.keyboard.keys[key];
-        break;
-      case 's': case 'S': case 'ArrowDown':
-        this.keys.down = this.keyboard.keys[key];
-        break;
-      case ' ':
-        this.keys.jump = this.keyboard.keys[key];
-        break;
-      case 'x': case 'X':
-        this.keys.noclip = this.keyboard.keys[key];
-        break;
-      default:
-        break;
-    }
   }
 
   move(delta) {
@@ -113,7 +74,6 @@ class Player {
     // noclip
     if (this.keys.noclip) {
       this.keys.noclip = false;
-      this.keyboard.release('x');
       this.noclip = (this.noclip == false);
     }
 
@@ -154,6 +114,11 @@ class Player {
     this.rotation.pitch = Blend(this.rotation.pitch, this.target.rotation.pitch, this.adjust.fast);
     this.group.position.set(this.position.x, this.position.y, this.position.z);
 	}
+
+  setRotation(pitch, yaw) {
+    this.target.rotation.pitch = pitch;
+    this.target.rotation.yaw = yaw;
+  }
 
   getTargetPosition() {
     return this.target.position;

@@ -1,7 +1,9 @@
+/**
+ * Keyboard interface.
+ **/
+
 class Keyboard {
   constructor(onEvent) {
-    // keyboard event handlers
-
     this.keys = {};
     this.onEvent = onEvent;
     document.addEventListener('keydown', (key) => { this.onKeyDown(key); });
@@ -19,7 +21,6 @@ class Keyboard {
   }
 
   release(key) {
-    // force release
     this.keys[key] = false;
   }
 

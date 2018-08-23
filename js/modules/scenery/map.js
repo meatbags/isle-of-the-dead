@@ -25,10 +25,10 @@ class Map {
     this.root.colliderSystem.add(this.floor);
 
     // blocks
-    var s = 50 / 3;
+    var s = 50 / 5;
     for (var x=-50 - s/2; x<50; x+=s) {
       for (var z=-50 - s/2; z<50; z+=s) {
-        const box = new THREE.Mesh(new THREE.SphereBufferGeometry(2, 12, 12), Materials.porcelain.clone());
+        const box = new THREE.Mesh(new THREE.BoxBufferGeometry(2, 10, 2), Materials.porcelain.clone());
         box.position.set(x, 2.5, z);
         this.root.colliderSystem.add(box);
         this.root.scene.add(box);

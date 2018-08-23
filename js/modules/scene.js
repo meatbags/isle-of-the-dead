@@ -2,8 +2,7 @@
  * Create and handle the scene: player, camera, map, collisions.
  **/
 
-import { Camera, Lighting, Player, Map, Raycaster } from './scenery';
-import { Mouse } from './controls';
+import { Camera, Lighting, Player, Map } from './scenery';
 
 class Scene {
   constructor() {
@@ -16,28 +15,9 @@ class Scene {
     this.camera = new Camera(this);
     this.lighting = new Lighting(this.scene);
     this.map = new Map(this);
-    this.raycaster = new Raycaster(el, this.camera.camera);
 
     // events
     window.addEventListener('resize', () => { this.resize(); });
-    this.onMouseDown = (e) => { this.mouse.start(e); };
-    this.onMouseMove = (e) => {
-      /*
-      if (!this.mouse.isActive()) {
-        this.map.activateObjects(
-          this.raycaster.cast(e, this.map.getInteractive())
-        );
-      }
-      */
-    };
-    this.onMouseUp = (e) => {
-      const t = (new Date()).getTime();
-      this.mouse.stop();
-      if (t - this.mouse.getTimestamp() < 100) {
-        // do something
-      }
-    };
-    this.mouse = new Mouse(el, this.onMouseDown, this.onMouseMove, this.onMouseUp);
   }
 
   resize() {
@@ -45,7 +25,6 @@ class Scene {
     this.height = window.innerHeight;
     this.camera.resize();
     this.map.resize();
-    this.raycaster.resize();
   }
 
   update(delta) {

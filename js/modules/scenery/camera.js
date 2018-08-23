@@ -38,10 +38,6 @@ class Camera {
       this.position.z + Math.cos(this.rotation.yaw) * offsetXZ)
     );
   }
-
-  teleport() {
-    this.camera.updateProjectionMatrix();
-  }
 }
 
 export { Camera };

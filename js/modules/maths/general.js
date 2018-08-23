@@ -12,4 +12,8 @@ const Rand = (n) => {
 
 const TwoPI = Math.PI * 2;
 
-export { Blend, MinAngleBetween, Rand, TwoPI };
+const Clamp = (value, min, max) => {
+  return Math.min(max, Math.max(min, value));
+}
+
+export { Blend, Clamp, MinAngleBetween, Rand, TwoPI };
