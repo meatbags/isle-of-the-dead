@@ -17,7 +17,7 @@ class ControlSurface {
 
     // interactive nodes
     this.nodes = [];
-    this.nodes.push(new NodeView(new THREE.Vector3(0, 0, 0), null));
+    this.nodes.push(new NodeView(new THREE.Vector3(0, 5, 0), null));
 
     // dom stuff
     this.domElement = document.querySelector('.wrapper');

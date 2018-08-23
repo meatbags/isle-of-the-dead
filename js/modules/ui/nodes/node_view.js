@@ -11,8 +11,22 @@ class NodeView extends NodeBase {
     this.active = true;
     this.hover = false;
     this.radius = {min: 5, max: 30, fadeThreshold: 5};
-    this.boundingBox = {width: 32, height: 32};
-    this.drawRadius = {current: 10, min: 5, max: 10};
+    this.boundingBox = {width: 40, height: 40};
+    this.eye = {
+      width: 18,
+      height: 9,
+      bez: 6,
+      radius: {
+        current: 7,
+        min: 6,
+        max: 7
+      }
+    };
+    this.bez = {};
+    this.bez.p1 = {x: this.eye.width, y: 2};
+    this.bez.cp1 = {x: this.eye.width - this.eye.bez, y: 2 + this.eye.bez * 0.75};
+    this.bez.cp2 = {x: this.eye.bez, y: this.eye.height};
+    this.bez.p2 = {x: 0, y: this.eye.height};
     this.distance = -1;
     this.opacity = 1;
   }
@@ -52,11 +66,23 @@ class NodeView extends NodeBase {
 
   draw(ctx) {
     if (this.onscreen && this.active) {
-      this.drawRadius.current += ((this.hover ? this.drawRadius.min : this.drawRadius.max) - this.drawRadius.current) * 0.25;
+      this.eye.radius.current += ((this.hover ? this.eye.radius.min : this.eye.radius.max) - this.eye.radius.current) * 0.25;
       ctx.globalAlpha = this.opacity;
       ctx.beginPath();
-      ctx.arc(this.coords.x, this.coords.y, this.drawRadius.current, 0, Math.PI * 2);
+      ctx.arc(this.coords.x, this.coords.y, this.eye.radius.current, 0, Math.PI * 2);
+      ctx.moveTo(this.coords.x + this.bez.p1.x, this.coords.y + this.bez.p1.y);
+      ctx.bezierCurveTo(this.coords.x + this.bez.cp1.x, this.coords.y + this.bez.cp1.y, this.coords.x + this.bez.cp2.x, this.coords.y + this.bez.cp2.y, this.coords.x + this.bez.p2.x, this.coords.y + this.bez.p2.y);
+      ctx.bezierCurveTo(this.coords.x - this.bez.cp2.x, this.coords.y + this.bez.cp2.y, this.coords.x - this.bez.cp1.x, this.coords.y + this.bez.cp1.y, this.coords.x - this.bez.p1.x, this.coords.y + this.bez.p1.y);
+      ctx.moveTo(this.coords.x - this.bez.p1.x, this.coords.y - this.bez.p1.y);
+      ctx.bezierCurveTo(this.coords.x - this.bez.cp1.x, this.coords.y - this.bez.cp1.y, this.coords.x - this.bez.cp2.x, this.coords.y - this.bez.cp2.y, this.coords.x - this.bez.p2.x, this.coords.y - this.bez.p2.y);
+      ctx.bezierCurveTo(this.coords.x + this.bez.cp2.x, this.coords.y - this.bez.cp2.y, this.coords.x + this.bez.cp1.x, this.coords.y - this.bez.cp1.y, this.coords.x + this.bez.p1.x, this.coords.y - this.bez.p1.y);
       ctx.stroke();
+
+      if (this.hover) {
+        ctx.beginPath();
+        ctx.arc(this.coords.x, this.coords.y, this.eye.radius.current, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
   }
 }

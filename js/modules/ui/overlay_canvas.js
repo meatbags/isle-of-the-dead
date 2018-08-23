@@ -16,6 +16,9 @@ class OverlayCanvas {
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
     this.ctx.font = '20px Karla';
     this.ctx.strokeStyle = '#fff';
+    this.ctx.fillStyle = '#fff';
+    this.ctx.lineWidth = 1.5;
+    this.ctx.lineCap = 'round';
   }
 
   resize() {
