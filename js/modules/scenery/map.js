@@ -4,6 +4,7 @@
 
 import { LoadFBX, Materials } from '../loader';
 import { Blend, Rand } from '../maths';
+import '../../lib/glsl/water.js';
 //import { TextNode } from './text_node';
 
 class Map {
@@ -15,38 +16,58 @@ class Map {
     this.centreY = this.root.height / 2;
     this.interactive = [];
     this.loader = new LoadFBX('./assets/');
+    this.materials = new Materials();
     this.loadScene();
   }
 
   loadScene() {
-    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(10000, 2, 10000), Materials.porcelain);
-    this.floor.position.y = -1;
-    this.root.scene.add(this.floor);
-    this.root.colliderSystem.add(this.floor);
+    // floor and water
+    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(768, 2, 512), new THREE.MeshPhysicalMaterial());
+    //const flowMap = new THREE.TextureLoader().load('assets/textures/Water_1_M_Flow_Alt.jpg');
+		this.water = new THREE.Water(new THREE.PlaneBufferGeometry(768, 512), {
+      color: 0xeeeeff,
+      scale: 40,
+      flowDirection: new THREE.Vector2(0.25, -0.5),
+      textureWidth: 1024,
+      textureHeight: 1024,
+      //flowMap: flowMap
+    });
+    this.water.rotation.x = -Math.PI / 2;
+    this.water.position.set(0, 0.3, -256 + 25);
+    this.floor.position.set(0, -2, this.water.position.z);
+    this.root.scene.add(this.floor, this.water);
 
-    // apply specific materials
+    // floor collider
+    const collision = new THREE.Mesh(new THREE.BoxBufferGeometry(768, 2, 512), new THREE.MeshPhongMaterial());
+    collision.position.y = -1;
+    this.root.colliderSystem.add(collision);
+
+    const afterMapLoaded = () => {
+      if (this.materials.loaded.chess) {
+        const tex = new THREE.TextureLoader().load('assets/textures/chess.jpg');
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(32, 32);
+        this.floor.material = this.materials.loaded.chess.clone();
+        this.floor.material.map = tex;
+        this.floor.material.metalnessMap = tex;
+        this.floor.material.needsUpdate = true;
+      }
+    };
+
     const addChildren = (obj) => {
+      // apply specific materials
       if (obj.type === 'Mesh') {
         const mat = obj.material;
-        obj.material.envMap = Materials.envMap;
+        obj.material.envMap = this.materials.envMap;
         obj.material.envMapIntensity = 0.5;
         this.root.colliderSystem.add(obj);
-        if (mat.name == 'porcelain') {
-          obj.material.normalScale.x = 0.125;
-          obj.material.normalScale.y = 0.125;
-          obj.material.emissive = Materials.porcelain.emissive;
-          obj.material.emissiveIntensity = 1.0;
-        } else if (mat.name == 'metal') {
-          // ?
-        }
-        // add to bank
-        Materials.loaded[mat.name] = mat;
+        this.materials.conform(obj.material);
       } else if (obj.children && obj.children.length) {
         obj.children.forEach(child => {
           addChildren(child);
         });
       }
-    }
+    };
 
     const lArt = () => {
       this.cones = [];
@@ -54,9 +75,9 @@ class Map {
         const r = 0.125 + Math.random() * 0.5;
         const h = 0.1 + Math.random() * 0.5;
         const geo = Math.random() < 0.85 ? new THREE.ConeBufferGeometry(r, h, 32) : new THREE.TorusBufferGeometry(r, r/4, 16, 16);
-        const mesh = new THREE.Mesh(geo, Materials.loaded.metal);
+        const mesh = new THREE.Mesh(geo, this.materials.loaded.metal);
         mesh.position.x = Math.random() * 10 - 5;
-          mesh.position.y = Math.random() * 10 + 5;
+        mesh.position.y = Math.random() * 10 + 5;
         mesh.position.z = Math.random() * 10 - 5;
         mesh.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, 0);
         this.cones.push(mesh);
@@ -67,6 +88,7 @@ class Map {
     this.loader.load('map').then((map) => {
       this.root.scene.add(map);
       addChildren(map);
+      afterMapLoaded();
       //lArt();
     }, (err) => {});
   }

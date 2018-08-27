@@ -11,11 +11,13 @@ class Lighting {
     this.lights = {point: {}, ambient: {}};
     this.lights.point.a = new THREE.PointLight(0xffffff, 1, 75, 2);
     this.lights.point.b = new THREE.PointLight(0xffffff, 0.25, 15, 1);
+    this.lights.point.c = new THREE.PointLight(0xffffff, 0.5, 6, 1);
     this.lights.ambient.a = new THREE.AmbientLight(0x8888ff, 0.125);
 
     // light positions
     this.lights.point.a.position.set(25, 25, 25);
     this.lights.point.b.position.set(0, 7, 12.5);
+    this.lights.point.c.position.set(-0.5, 6.5, 2.5);
 
     // add
     Object.keys(this.lights).forEach(type => {

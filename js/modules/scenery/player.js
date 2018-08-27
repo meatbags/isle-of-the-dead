@@ -7,8 +7,8 @@ import { Blend, MinAngleBetween, TwoPI } from '../maths';
 class Player {
   constructor(root) {
     this.root = root;
-    this.position = new THREE.Vector3(0, 0, 15);
-    this.rotation = {pitch: Math.PI * 0.05, roll: 0, yaw: Math.PI};
+    this.position = new THREE.Vector3(0, 0, 23.5);
+    this.rotation = {pitch: Math.PI * 0.025, roll: 0, yaw: Math.PI};
     this.motion = new THREE.Vector3();
     this.target = {
       position: this.position.clone(),
