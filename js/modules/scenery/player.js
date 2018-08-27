@@ -7,8 +7,8 @@ import { Blend, MinAngleBetween, TwoPI } from '../maths';
 class Player {
   constructor(root) {
     this.root = root;
-    this.position = new THREE.Vector3(10, 5, 0);
-    this.rotation = {pitch: Math.PI * -0.1, roll: 0, yaw: -Math.PI / 2};
+    this.position = new THREE.Vector3(0, 0, 15);
+    this.rotation = {pitch: Math.PI * 0.05, roll: 0, yaw: Math.PI};
     this.motion = new THREE.Vector3();
     this.target = {
       position: this.position.clone(),
@@ -19,14 +19,14 @@ class Player {
     this.collider.setPhysics({gravity: 20});
 
     // physical attributes
-    this.speed = 8;
+    this.speed = 3;
     this.rotationSpeed = Math.PI * 0.8;
-    this.jump = 11;
+    this.jump = 8;
     this.jumpSpeedMultiplier = 0.25;
     this.falling = false;
     this.fallTime = 0;
     this.fallTimeThreshold = 0.2;
-    this.noclip = true;
+    this.noclip = false;
     this.noclipSpeed = 40;
     this.minPitch = Math.PI * -0.15;
     this.maxPitch = Math.PI * 0.15;
@@ -37,7 +37,7 @@ class Player {
 
     // add to scene
     this.group = new THREE.Group();
-    this.light = new THREE.PointLight(0xffffff, 0.5, 20, 2);
+    this.light = new THREE.PointLight(0xffffff, 0.25, 20, 2);
     this.light.position.y = 1.8;
     this.group.add(this.light);
     this.root.scene.add(this.group);

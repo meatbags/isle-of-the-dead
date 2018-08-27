@@ -3,7 +3,8 @@
  **/
 
 class OverlayCanvas {
-  constructor(domElement) {
+  constructor(root, domElement) {
+    this.root = root;
     this.cvs = document.createElement('canvas');
     this.ctx = this.cvs.getContext('2d');
     this.cvs.width = window.innerWidth;
@@ -14,7 +15,7 @@ class OverlayCanvas {
 
   clear() {
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
-    this.ctx.font = '20px Karla';
+    this.ctx.font = '14px Karla';
     this.ctx.strokeStyle = '#fff';
     this.ctx.fillStyle = '#fff';
     this.ctx.lineWidth = 1.5;
@@ -32,7 +33,12 @@ class OverlayCanvas {
     for (var i=0, len=objects.length; i<len; ++i) {
       objects[i].draw(this.ctx);
     }
-    this.ctx.strokeRect(0, 0, 100, 100);
+
+    this.ctx.globalAlpha = 1;
+    const x = Math.round(this.root.player.position.x * 10) / 10;
+    const y = Math.round(this.root.player.position.y * 10) / 10;
+    const z = Math.round(this.root.player.position.z * 10) / 10;
+    this.ctx.fillText(`${x}, ${y}, ${z}`, 20, 30);
   }
 }
 

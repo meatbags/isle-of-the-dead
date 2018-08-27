@@ -23,7 +23,7 @@ class ControlSurface {
     this.domElement = document.querySelector('.wrapper');
     this.keyboard = new Keyboard((key) => { this.onKeyboard(key); });
     this.mouse = new Mouse(this.domElement, (e) => { this.onMouseDown(e); }, (e) => { this.onMouseMove(e); }, (e) => { this.onMouseUp(e); });
-    this.canvas = new OverlayCanvas(this.domElement);
+    this.canvas = new OverlayCanvas(this, this.domElement);
     window.addEventListener('resize', () => { this.resize(); });
   }
 

@@ -52,18 +52,17 @@ class LoadOBJ {
   preload(key, meta) {
     // load materials from meta mat file
     this.materials[key] = {};
-
-    for (let prop in meta) {
-      if (meta.hasOwnProperty(prop)) {
-        this.newMaterial(key, prop, meta[prop]);
-      }
-    }
+    Object.keys(meta).forEach(prop => {
+      this.newMaterial(key, prop, meta[prop]);
+    });
   }
 
   newMaterial(key, target, prop) {
     // make new material from props
     this.materials[key][target] = new THREE.MeshPhysicalMaterial({});
     const mat = this.materials[key][target];
+
+    console.log(prop)
 
     // diffuse map (texture)
     if (prop.map_kd) {

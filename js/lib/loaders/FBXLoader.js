@@ -43,7 +43,7 @@
 	Object.assign( THREE.FBXLoader.prototype, {
 		load: function ( url, onLoad, onProgress, onError ) {
 			var self = this;
-			var resourceDirectory = THREE.LoaderUtils.extractUrlBase(url);//THREE.Loader.prototype.extractUrlBase( url );
+			var resourceDirectory = THREE.Loader.prototype.extractUrlBase( url );// THREE.LoaderUtils.extractUrlBase(url);
 			var loader = new THREE.FileLoader( this.manager );
 			loader.setResponseType( 'arraybuffer' );
 			loader.load( url, function ( buffer ) {
@@ -409,6 +409,8 @@
 		}
 
 		// Maya PBR export
+		//console.log(properties);
+
 		if (properties['Maya|base_color']) {
 			var c = properties['Maya|base_color'].value;
 			parameters.color = new THREE.Color(c[0], c[1], c[2]);

@@ -2,7 +2,7 @@
  * Loads all 3d models and populates collision map.
  **/
 
-import { LoadOBJ, Materials } from '../loader';
+import { LoadFBX, Materials } from '../loader';
 import { Blend, Rand } from '../maths';
 //import { TextNode } from './text_node';
 
@@ -14,58 +14,70 @@ class Map {
     this.centreX = this.root.width / 2;
     this.centreY = this.root.height / 2;
     this.interactive = [];
-    this.loader = new LoadOBJ('./assets/');
+    this.loader = new LoadFBX('./assets/');
     this.loadScene();
   }
 
   loadScene() {
-    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(10000, 1, 10000), Materials.porcelain.clone());
+    this.floor = new THREE.Mesh(new THREE.BoxBufferGeometry(10000, 2, 10000), Materials.porcelain);
     this.floor.position.y = -1;
     this.root.scene.add(this.floor);
     this.root.colliderSystem.add(this.floor);
 
-    // blocks
-    var s = 50 / 5;
-    for (var x=-50 - s/2; x<50; x+=s) {
-      for (var z=-50 - s/2; z<50; z+=s) {
-        const box = new THREE.Mesh(new THREE.BoxBufferGeometry(2, 10, 2), Materials.porcelain.clone());
-        box.position.set(x, 2.5, z);
-        this.root.colliderSystem.add(box);
-        this.root.scene.add(box);
-        this.interactive.push(box);
+    // apply specific materials
+    const addChildren = (obj) => {
+      if (obj.type === 'Mesh') {
+        const mat = obj.material;
+        obj.material.envMap = Materials.envMap;
+        obj.material.envMapIntensity = 0.5;
+        this.root.colliderSystem.add(obj);
+        if (mat.name == 'porcelain') {
+          obj.material.normalScale.x = 0.125;
+          obj.material.normalScale.y = 0.125;
+          obj.material.emissive = Materials.porcelain.emissive;
+          obj.material.emissiveIntensity = 1.0;
+        } else if (mat.name == 'metal') {
+          // ?
+        }
+        // add to bank
+        Materials.loaded[mat.name] = mat;
+      } else if (obj.children && obj.children.length) {
+        obj.children.forEach(child => {
+          addChildren(child);
+        });
       }
     }
 
-    /*
-    this.loader.load('object-file-name').then((map) => {
-      this.scene.add(map);
+    const lArt = () => {
+      this.cones = [];
+      for (var i=0, len=500; i<len; ++i) {
+        const r = 0.125 + Math.random() * 0.5;
+        const h = 0.1 + Math.random() * 0.5;
+        const geo = Math.random() < 0.85 ? new THREE.ConeBufferGeometry(r, h, 32) : new THREE.TorusBufferGeometry(r, r/4, 16, 16);
+        const mesh = new THREE.Mesh(geo, Materials.loaded.metal);
+        mesh.position.x = Math.random() * 10 - 5;
+          mesh.position.y = Math.random() * 10 + 5;
+        mesh.position.z = Math.random() * 10 - 5;
+        mesh.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, 0);
+        this.cones.push(mesh);
+        this.root.scene.add(mesh);
+      }
+    }
+
+    this.loader.load('map').then((map) => {
+      this.root.scene.add(map);
+      addChildren(map);
+      //lArt();
     }, (err) => {});
-    */
   }
 
   update(delta) {
-    // brighten cubes
-    /*
-    for (var i=0, len=this.interactive.length; i<len; ++i) {
-      const box = this.interactive[i];
-      if (box.active) {
-        const c = Blend(box.material.emissive.r, 1, 0.25);
-        box.material.emissive.r = c;
-        box.material.emissive.g = c;
-        box.material.emissive.b = c;
-      } else {
-        const c = Blend(box.material.emissive.r, 0, 0.25);
-        box.material.emissive.r = c;
-        box.material.emissive.g = c;
-        box.material.emissive.b = c;
-      }
+    if (this.cones) {
+      this.cones.forEach(cone => {
+        cone.rotation.x += delta / 2;
+        cone.rotation.y += delta / 4;
+      })
     }
-    */
-
-    //this.camera.getWorldDirection(this.cameraWorldDirection);
-    //for (var i=0, len=this.textNodes.length; i<len; ++i) {
-      //this.textNodes[i].update(delta, this.camera, this.cameraWorldDirection, this.centreX, this.centreY)
-    //}
   }
 
   resize() {

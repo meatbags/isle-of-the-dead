@@ -7,10 +7,11 @@ class Camera {
     this.root = root;
     this.position = this.root.player.position;
     this.rotation = this.root.player.rotation;
-    this.fov = 90;
+    this.target = new THREE.Vector3();
+    this.fov = 65;
     this.aspectRatio = this.root.width / this.root.height;
-    this.offset = 0.1;
-    this.height = 2;
+    this.offset = 1;
+    this.height = 1.75;
     this.camera = new THREE.PerspectiveCamera(this.fov, this.aspectRatio, 0.1, 2000000);
     this.camera.up = new THREE.Vector3(0, 1, 0);
   }
@@ -27,16 +28,13 @@ class Camera {
     const y = this.position.y + this.height;
     this.camera.up.z = -Math.sin(this.rotation.yaw) * this.rotation.roll;
     this.camera.up.x = Math.cos(this.rotation.yaw) * this.rotation.roll;
-    this.camera.position.set(
-      this.position.x - Math.sin(this.rotation.yaw) * offsetXZ / 4,
-      y - Math.sin(this.rotation.pitch) * offsetY / 4,
-      this.position.z - Math.cos(this.rotation.yaw) * offsetXZ / 4
-    );
-    this.camera.lookAt(
-      new THREE.Vector3(this.position.x + Math.sin(this.rotation.yaw) * offsetXZ,
-      y + Math.sin(this.rotation.pitch) * offsetY,
-      this.position.z + Math.cos(this.rotation.yaw) * offsetXZ)
-    );
+    this.camera.position.x = this.position.x - Math.sin(this.rotation.yaw) * offsetXZ / 4;
+    this.camera.position.y = y - Math.sin(this.rotation.pitch) * offsetY / 4;
+    this.camera.position.z = this.position.z - Math.cos(this.rotation.yaw) * offsetXZ / 4;
+    this.target.x = this.position.x + Math.sin(this.rotation.yaw) * offsetXZ;
+    this.target.y = y + Math.sin(this.rotation.pitch) * offsetY;
+    this.target.z = this.position.z + Math.cos(this.rotation.yaw) * offsetXZ;
+    this.camera.lookAt(this.target);
   }
 }
 
