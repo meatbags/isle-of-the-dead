@@ -7,7 +7,7 @@ class Materials {
     // preload default mats & maps
     this.mat = {
       default: new THREE.MeshPhysicalMaterial({emissive: 0, roughness: 1, envMapIntensity: 0.25}),
-      porcelain: new THREE.MeshPhysicalMaterial({color: 0xffffff, emissive: 0x444444, roughness: 0.55, metalness: 0.125, envMapIntensity: 0.5}),
+      porcelain: new THREE.MeshPhysicalMaterial({color: 0xffffff, emissive: 0x888888, emissiveIntensity: 0.6, roughness: 0.55, metalness: 0.125, envMapIntensity: 0.5}),
       metal: new THREE.MeshPhysicalMaterial({color: 0xa88e79, emissive: 0x0, roughness: 0.25, metalness: 1.0, envMapIntensity: 0.5}),
     };
     this.envMap = new THREE.CubeTextureLoader().load(['./assets/envmap/posx.jpg', './assets/envmap/negx.jpg', './assets/envmap/posy.jpg', './assets/envmap/negy.jpg', './assets/envmap/posz.jpg', './assets/envmap/negz.jpg']);
@@ -28,17 +28,31 @@ class Materials {
 
   conform(mat) {
     // format material attribs
-    if (mat.name == 'porcelain') {
-      mat.normalScale.x = 0.125;
-      mat.normalScale.y = 0.125;
-      mat.emissive = this.mat.porcelain.emissive;
-      mat.emissiveIntensity = 1.0;
-    } else if (mat.name == 'metal') {
-      mat.normalScale.x = 0.02;
-      mat.normalScale.y = 0.02;
-    } else if (mat.name == 'chess') {
-      mat.normalScale.x = 0.0625;
-      mat.normalScale.y = 0.0625;
+    mat.envMap = this.envMap;
+    mat.envMapIntensity = 0.5;
+
+    switch (mat.name) {
+      case 'porcelain':
+        mat.normalScale.x = 0.125;
+        mat.normalScale.y = 0.125;
+        mat.emissive = this.mat.porcelain.emissive;
+        mat.emissiveIntensity = this.mat.porcelain.emissiveIntensity;
+        break;
+      case 'metal':
+        mat.normalScale.x = 0.02;
+        mat.normalScale.y = 0.02;
+        break;
+      case 'chess':
+        mat.normalScale.x = 0.0625;
+        mat.normalScale.y = 0.0625;
+        break;
+      case 'white':
+        mat.emissive = new THREE.Color(1, 1, 1);
+        mat.envMap = null;
+        mat.needsUpdate = true;
+        break;
+      default:
+        break;
     }
 
     // add to store

@@ -57,9 +57,6 @@ class Map {
     const addChildren = (obj) => {
       // apply specific materials
       if (obj.type === 'Mesh') {
-        const mat = obj.material;
-        obj.material.envMap = this.materials.envMap;
-        obj.material.envMapIntensity = 0.5;
         this.root.colliderSystem.add(obj);
         this.materials.conform(obj.material);
       } else if (obj.children && obj.children.length) {

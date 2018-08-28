@@ -8,21 +8,25 @@ class Lighting {
   constructor(scene) {
     // create scene lighting
     this.scene = scene;
-    this.lights = {point: {}, ambient: {}};
-    this.lights.point.a = new THREE.PointLight(0xffffff, 1, 75, 2);
-    this.lights.point.b = new THREE.PointLight(0xffffff, 0.25, 15, 1);
-    this.lights.point.c = new THREE.PointLight(0xffffff, 0.5, 6, 1);
-    this.lights.ambient.a = new THREE.AmbientLight(0x8888ff, 0.125);
+    this.lights = {point: {}, ambient: {}, hemisphere: {}, directional: {}};
+    this.lights.point.a = new THREE.PointLight(0xffffff, 0.5, 12, 2);
+    this.lights.ambient.a = new THREE.AmbientLight(0xffffff, 0.0625);
+    this.lights.hemisphere.a = new THREE.HemisphereLight(0x0, 0x0000ff, 0.25);
+    this.lights.directional.a = new THREE.DirectionalLight(0xffffff, 0.25);
 
-    // light positions
-    this.lights.point.a.position.set(25, 25, 25);
-    this.lights.point.b.position.set(0, 7, 12.5);
-    this.lights.point.c.position.set(-0.5, 6.5, 2.5);
+    // configure lights
+    this.lights.point.a.position.set(0, 7.4, 2.5);
+    this.lights.directional.a.position.set(0, 0, 0);
+    this.lights.directional.a.target.position.set(1, 0.25, -0.25);
+    console.log(this.lights.directional.a)
 
     // add
     Object.keys(this.lights).forEach(type => {
       Object.keys(this.lights[type]).forEach(key => {
         this.scene.add(this.lights[type][key]);
+        if (type === 'directional') {
+          this.scene.add(this.lights[type][key].target);
+        }
       })
     });
 

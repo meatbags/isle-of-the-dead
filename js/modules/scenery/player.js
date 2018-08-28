@@ -7,7 +7,7 @@ import { Blend, MinAngleBetween, TwoPI } from '../maths';
 class Player {
   constructor(root) {
     this.root = root;
-    this.position = new THREE.Vector3(0, 0, 23.5);
+    this.position = new THREE.Vector3(0, 3, 8); // z = 23.5
     this.rotation = {pitch: Math.PI * 0.025, roll: 0, yaw: Math.PI};
     this.motion = new THREE.Vector3();
     this.target = {
@@ -37,7 +37,7 @@ class Player {
 
     // add to scene
     this.group = new THREE.Group();
-    this.light = new THREE.PointLight(0xffffff, 0.25, 20, 2);
+    this.light = new THREE.PointLight(0xffffff, 0.25, 4, 2);
     this.light.position.y = 1.8;
     this.group.add(this.light);
     this.root.scene.add(this.group);
